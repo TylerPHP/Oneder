@@ -5,7 +5,6 @@ from app.models import Clock
 from app.serializers import ClockSerializer
 from datetime import datetime
 import socket
-import time
 
 
 class AddAlarms(APIView):
@@ -25,31 +24,25 @@ class AddAlarms(APIView):
         """Receiving data"""
         alarms = Clock.objects.filter(time__gte=datetime.now())
         serializer = ClockSerializer(alarms, many=True)
-        return Response({"articles": serializer.data})
+        return Response({"data": serializer.data})
 
 
 class WebSocket(APIView):
     """Websocket"""
 
     def get(self, request):
-        server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-        server_socket.bind(('127.0.0.1', 8000))
-        server_socket.listen()
-        while True:
-            print('Connection')
-            client_socket, addr = server_socket.accept()
-            # print('Connection from', addr)
-            while True:
-                time.sleep(1)
-                alarms = Clock.objects.filter(time__gte=datetime.now())
-                print('Before)')
-                request = client_socket.recv(4096)
+        pass
+        # server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        # server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        # server_socket.bind(('127.0.0.1', 8000))
+        # server_socket.listen()
+        # while True:
+        #     print('Connection')
+        #     client_socket, addr = server_socket.accept()
+        #     # print('Connection from', addr)
+        #     while True:
+        #         alarms = Clock.objects.get(time=datetime.now())
+        #         serializer = ClockSerializer(alarms, many=True)
+        #           if alarms:
+        #               return Response({"data": serializer})
 
-                if not request:
-                    break
-                else:
-                    response = 'hello world\n'.encode()
-                    client_socket.send(response)
-
-                    # return Response({"Connection from": addr})
